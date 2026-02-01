@@ -1,0 +1,29 @@
+import React from 'react';
+
+const OurStoryHero: React.FC = () => {
+  return (
+    <div className="relative bg-gradient-to-b from-[#0c2e27] to-[#1a4a3f] text-white text-center py-10 md:py-20 lg:py-20">
+      <div className="absolute inset-0" style={{ backgroundImage: 'url(https://www.transparenttextures.com/patterns/subtle-carbon.png)', opacity: 0.05 }}></div>
+      <div className="relative z-10">
+        <div className="flex justify-center items-center mb-4">
+          {/* Optional leaf icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#d4b47f]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 className="text-5xl md:text-6xl lg:text-7xl" style={{ fontFamily: "'Playfair Display', serif" }}>
+          About Sleeponix
+        </h1>
+        <p className="text-lg md:text-xl text-[#d4b47f] mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Redefining Natural Sleep
+        </p>
+        <div className="w-24 h-px bg-[#d4b47f] mx-auto mt-6"></div>
+        <div className="max-w-3xl mx-auto mt-8 px-4">
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default OurStoryHero;

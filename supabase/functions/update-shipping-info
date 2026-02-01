@@ -1,0 +1,73 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.0.0'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  try {
+    const { order_id, courier_name, tracking_id, tracking_url } = await req.json()
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    )
+
+    const { data: order, error: orderError } = await supabaseClient
+      .from('orders')
+      .select('*, customer_details:customers(*)')
+      .eq('id', order_id)
+      .single()
+
+    if (orderError) throw orderError
+
+    const { error: updateError } = await supabaseClient
+      .from('orders')
+      .update({
+        courier_name,
+        tracking_id,
+        tracking_url,
+        shipping_status: 'Shipped',
+        status: 'Shipped',
+      })
+      .eq('id', order_id)
+
+    if (updateError) throw updateError
+
+    const emailHtml = `
+      <h1>Your Order Has Shipped!</h1>
+      <p>Hi ${order.customer_details.name},</p>
+      <p>Your order #${order.order_number} has been shipped via ${courier_name}.</p>
+      <p>You can track your package using the following tracking ID: <strong>${tracking_id}</strong></p>
+      <p><a href="${tracking_url}">Click here to track your order</a></p>
+      <p>Thank you for your purchase!</p>
+    `
+
+    const { error: emailError } = await supabaseClient.functions.invoke('send-email', {
+      body: {
+        to: order.customer_details.email,
+        subject: `Your order #${order.order_number} has shipped!`,
+        html: emailHtml,
+      },
+    })
+
+    if (emailError) throw emailError
+
+    return new Response(JSON.stringify({ message: 'Order updated and notification sent' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
+    })
+  }
+})

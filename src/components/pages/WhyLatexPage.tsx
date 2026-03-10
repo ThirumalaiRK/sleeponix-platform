@@ -1,7 +1,14 @@
 import React from 'react';
 import { Check, X, Droplet, Layers, Zap, Shield, Star, Package } from 'lucide-react';
+import { useSEO } from '../../hooks/useSEO';
 
 const WhyLatexPage: React.FC = () => {
+  useSEO({
+    title: 'Why Natural Latex? | Sleeponix - Science of Better Sleep',
+    description: 'Discover why natural latex mattresses outperform memory foam and spring mattresses. Breathable, hypoallergenic, durable & eco-friendly sleep solutions.',
+    keywords: 'why natural latex mattress, latex vs memory foam, organic latex benefits, best mattress material',
+    canonicalPath: '/why-latex',
+  });
   const comparisons = [
     { feature: "Temperature Regulation", latex: true, memory: false, spring: false },
     { feature: "Motion Isolation", latex: true, memory: true, spring: false },
@@ -70,7 +77,7 @@ const WhyLatexPage: React.FC = () => {
                 <h3 className="text-2xl font-serif font-bold text-deep-indigo mb-6 text-center">
                   Natural Latex Open-Cell Structure
                 </h3>
-                
+
                 {/* Simplified SVG representation of open-cell structure */}
                 <div className="relative bg-gradient-to-br from-gold-champagne/10 to-forest-green/10 p-8 rounded-xl">
                   <svg viewBox="0 0 300 200" className="w-full h-auto">
@@ -92,11 +99,11 @@ const WhyLatexPage: React.FC = () => {
                         />
                       );
                     })}
-                    
+
                     {/* Airflow arrows */}
                     <path d="M50 10 L250 10 M250 5 L245 10 L250 15" stroke="#3B5E47" strokeWidth="2" fill="none" />
                     <path d="M50 190 L250 190 M50 185 L55 190 L50 195" stroke="#3B5E47" strokeWidth="2" fill="none" />
-                    
+
                     <text x="150" y="35" textAnchor="middle" className="text-xs fill-forest-green font-semibold">
                       Cool Air Flow
                     </text>
@@ -105,7 +112,7 @@ const WhyLatexPage: React.FC = () => {
                     </text>
                   </svg>
                 </div>
-                
+
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center space-x-3">
                     <div className="w-4 h-4 border-2 border-gold-champagne rounded-full"></div>
@@ -128,13 +135,13 @@ const WhyLatexPage: React.FC = () => {
               <h2 className="text-4xl md:text-5xl font-serif font-bold gradient-text mb-8">
                 Natural Latex vs Others
               </h2>
-              
+
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-deep-indigo mb-6 text-center">
                     Material Comparison
                   </h3>
-                  
+
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
@@ -193,7 +200,7 @@ const WhyLatexPage: React.FC = () => {
               6-Step Artisanal Crafting Process
             </h3>
             <p className="text-xl text-slate-gray max-w-3xl mx-auto">
-              We combine age-old natural harvesting methods with advanced manufacturing 
+              We combine age-old natural harvesting methods with advanced manufacturing
               for unmatched mattress purity and comfort.
             </p>
           </div>
@@ -204,23 +211,21 @@ const WhyLatexPage: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {manufacturingSteps.map((step, index) => (
-                <div 
+                <div
                   key={step.title}
-                  className={`relative ${
-                    index % 2 === 0 ? 'lg:pr-16 lg:text-right' : 'lg:pl-16 lg:text-left'
-                  } fade-in-up`}
+                  className={`relative ${index % 2 === 0 ? 'lg:pr-16 lg:text-right' : 'lg:pl-16 lg:text-left'
+                    } fade-in-up`}
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   {/* Timeline dot */}
-                  <div className="hidden lg:block absolute top-8 w-6 h-6 bg-gold-champagne rounded-full border-4 border-white shadow-lg" 
-                        style={{
-                          [index % 2 === 0 ? 'right' : 'left']: '-44px'
-                        }}></div>
+                  <div className="hidden lg:block absolute top-8 w-6 h-6 bg-gold-champagne rounded-full border-4 border-white shadow-lg"
+                    style={{
+                      [index % 2 === 0 ? 'right' : 'left']: '-44px'
+                    }}></div>
 
                   <div className="bg-white p-8 rounded-2xl shadow-lg hover-lift">
-                    <div className={`flex items-center space-x-4 ${
-                      index % 2 === 0 ? 'lg:flex-row-reverse lg:space-x-reverse' : ''
-                    } mb-4`}>
+                    <div className={`flex items-center space-x-4 ${index % 2 === 0 ? 'lg:flex-row-reverse lg:space-x-reverse' : ''
+                      } mb-4`}>
                       <div className="w-16 h-16 bg-gold-champagne/10 rounded-full flex items-center justify-center flex-shrink-0">
                         <step.icon className="text-gold-champagne" size={32} />
                       </div>
@@ -230,7 +235,7 @@ const WhyLatexPage: React.FC = () => {
                         </h3>
                       </div>
                     </div>
-                    
+
                     <p className="text-slate-gray leading-relaxed">
                       {step.description}
                     </p>

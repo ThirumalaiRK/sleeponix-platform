@@ -9,13 +9,15 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { Toaster, toast } from "react-hot-toast";
 import { useCart } from '../../context/CartContext';
-import cocoon from '../../assets/cocoon.png';
-import cocoon1 from '../../assets/cocoon1.png';
-import cocoon2 from '../../assets/cocoon2.png';
-import cocoon4 from '../../assets/coccon4.png';
-import cocoon5 from '../../assets/coccon5.png';
-import spinerelax from '../../assets/spinerelax.png';
-import heaven from '../../assets/heaven.png';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
+import cocoon from '../../assets/cocoon.webp';
+import cocoon1 from '../../assets/cocoon1.webp';
+import cocoon2 from '../../assets/cocoon2.webp';
+import cocoon4 from '../../assets/coccon4.webp';
+import cocoon5 from '../../assets/coccon5.webp';
+import spinerelax from '../../assets/spinerelax.webp';
+import heaven from '../../assets/heaven.webp';
 
 const priceData = {
   "72\" X 36\"": { "5\"": 15999, "6\"": 16999 },
@@ -68,6 +70,23 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, 
 
 const Cocoon: React.FC = () => {
   const { addToCart, setCartOpen } = useCart();
+
+  useSEO({
+    title: 'Cocoon Plush Mattress | Sleeponix — Ultra-Soft HR Foam + Natural Latex',
+    description: 'Buy Cocoon ultra-plush mattress. 40 Density HR foam base with 1" natural latex top layer. Perfect for side sleepers. 5-year warranty. Free delivery.',
+    keywords: 'plush soft mattress, HR foam latex mattress, side sleeper mattress, ultra soft mattress India',
+    canonicalPath: '/products/cocoon',
+  });
+  useSchema({
+    type: 'Product',
+    name: 'Cocoon Ultra-Plush Mattress',
+    description: '40 Density HR Foam + 1" Natural Latex ultra-plush mattress. Perfect for side sleepers who want zero-pressure comfort. 5-year warranty.',
+    image: '/assets/cocoon.webp',
+    price: 15999,
+    rating: 4.7,
+    reviewCount: 88,
+    url: '/products/cocoon',
+  });
   const [selectedSize, setSelectedSize] = useState<string>(sizes[0]);
   const [selectedThickness, setSelectedThickness] = useState<string>(thicknesses[0]);
   const [quantity, setQuantity] = useState(1);
@@ -125,7 +144,7 @@ const Cocoon: React.FC = () => {
       description: '40 Density HR Foam + 1” Natural Latex',
       alt: 'Cocoon Mattress',
       warranty: "5 Years",
-      category: "Mattress",
+      category: "Mattresses",
     }, quantity);
     toast.success(`✅ ${quantity} x COCOON (${selectedSize} / ${selectedThickness}) added to your cart!`);
     setCartOpen(true);
@@ -488,7 +507,7 @@ const Cocoon: React.FC = () => {
               <div className="p-8 text-center relative">
                 <h3 className="text-2xl font-serif font-bold text-[#1C2635] mb-2">SpineRelax</h3>
                 <p className="text-stone-500 mb-6">Dual-Layer Orthopedic Comfort</p>
-                <Link to="/products/spinerelax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
+                <Link to="/products/spine-relax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
                   View Product
                 </Link>
               </div>

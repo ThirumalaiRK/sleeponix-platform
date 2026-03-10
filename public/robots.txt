@@ -1,0 +1,29 @@
+# Sleeponix - robots.txt
+# https://thesleeponix.com
+
+User-agent: *
+
+# Allow all public-facing pages
+Allow: /
+
+# Block admin panel — should NEVER appear in Google (security + crawl budget)
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin-login
+Disallow: /admin/dashboard
+Disallow: /admin/orders
+Disallow: /admin/notifications
+Disallow: /admin/income
+Disallow: /admin/analytics
+Disallow: /admin/settings
+
+# Block transactional pages — not useful in search results
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
+
+# Block query string URLs — prevents duplicate content from shop filters
+Disallow: /*?*
+
+# Sitemap location
+Sitemap: https://thesleeponix.com/sitemap.xml

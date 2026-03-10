@@ -56,44 +56,43 @@ const OrderStatusChart: React.FC<OrderStatusChartProps> = ({ statusData }) => {
   if (error) return <div className="text-center p-4 text-red-500">{error}</div>;
   if (!statusData || statusData.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-serif text-[#143d29] mb-4">Order Status Distribution</h2>
-        <div className="text-center p-4">No order status data available.</div>
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">No data available.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-serif text-[#143d29] mb-4">Order Status Distribution</h2>
-      <div style={{ height: '400px' }}>
-        <Doughnut
-          data={chartData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    let label = context.label || '';
-                    if (label) {
-                      label += ': ';
-                    }
-                    if (context.parsed !== null) {
-                      label += context.parsed;
-                    }
-                    return label;
-                  },
+    <div style={{ height: '300px', width: '100%' }}>
+      <Doughnut
+        data={chartData}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false, // Hiding legend as requested for cleaner look in new design
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed !== null) {
+                    const data = context.chart.data.datasets[0].data as number[];
+                    const total = data.reduce((a, b) => a + (b || 0), 0);
+                    const percentage = total > 0 ? Math.round((context.parsed / total) * 100) : 0;
+                    label += `${context.parsed} (${percentage}%)`;
+                  }
+                  return label;
                 },
               },
             },
-          }}
-        />
-      </div>
+          },
+        }}
+      />
     </div>
   );
 };

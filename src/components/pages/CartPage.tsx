@@ -1,54 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
-
-interface CartItem {
-  id: string;
-  name: string;
-  subtitle?: string;
-  price: number;
-  image: string;
-  quantity: number;
-  size: string;
-  color?: string;
-}
+import { useCart } from '../../context/CartContext';
 
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
-
-  // Load cart items from localStorage
-  useEffect(() => {
-    const loadCartItems = () => {
-      try {
-        const savedCart = localStorage.getItem('sleeponix_cart');
-        if (savedCart) {
-          const parsedCart = JSON.parse(savedCart);
-          // Add default values for missing properties
-          const normalizedCart = parsedCart.map((item: any) => ({
-            ...item,
-            subtitle: item.subtitle || getProductSubtitle(item.id),
-            color: item.color || 'White',
-            size: item.size || 'Queen'
-          }));
-          setCartItems(normalizedCart);
-        }
-      } catch (error) {
-        console.error('Error loading cart:', error);
-      }
-    };
-
-    loadCartItems();
-
-    // Listen for cart updates
-    const handleCartUpdate = () => {
-      loadCartItems();
-    };
-
-    window.addEventListener('cartUpdated', handleCartUpdate);
-    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-  }, []);
 
   const getProductSubtitle = (productId: string): string => {
     const subtitles: { [key: string]: string } = {
@@ -57,30 +15,9 @@ const CartPage: React.FC = () => {
       'ortho': 'Triple-Layer Joint Comfort',
       'premium-pillow': 'Natural Comfort Support'
     };
-    return subtitles[productId] || 'Premium Sleep Product';
-  };
-
-  // Update cart in localStorage and trigger event
-  const updateCart = (newCart: CartItem[]) => {
-    setCartItems(newCart);
-    localStorage.setItem('sleeponix_cart', JSON.stringify(newCart));
-    window.dispatchEvent(new CustomEvent('cartUpdated'));
-  };
-
-  const updateQuantityByKey = (id: string, size: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItemByKey(id, size);
-      return;
-    }
-    const updatedItems = cartItems.map(item =>
-      item.id === id && item.size === size ? { ...item, quantity: newQuantity } : item
-    );
-    updateCart(updatedItems);
-  };
-
-  const removeItemByKey = (id: string, size: string) => {
-    const updatedItems = cartItems.filter(item => !(item.id === id && item.size === size));
-    updateCart(updatedItems);
+    // Extract base product ID if it's a composite ID
+    const baseId = productId.split('-')[0] + '-' + productId.split('-')[1];
+    return subtitles[productId] || subtitles[baseId] || 'Premium Sleep Product';
   };
 
   const applyPromoCode = () => {
@@ -93,10 +30,9 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartTotal;
   const discountAmount = subtotal * discount;
-  const shipping = subtotal > 20000 ? 0 : 500;
-  // Tax removed as per request
+  const shipping = 0;
   const total = subtotal - discountAmount + shipping;
 
   if (cartItems.length === 0) {
@@ -147,7 +83,7 @@ const CartPage: React.FC = () => {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {cartItems.map((item) => (
-              <div key={`${item.id}-${item.size}-${item.color}`} className="bg-white rounded-2xl shadow-lg p-6">
+              <div key={item.id} className="bg-white rounded-2xl shadow-lg p-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-full md:w-32 h-32 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                     <img
@@ -163,14 +99,12 @@ const CartPage: React.FC = () => {
                         <h3 className="text-xl font-serif font-bold text-deep-indigo">
                           {item.name}
                         </h3>
-                        {item.subtitle && (
-                          <p className="text-gold-champagne font-medium">
-                            {item.subtitle}
-                          </p>
-                        )}
+                        <p className="text-gold-champagne font-medium">
+                          {(item as any).subtitle || item.tagline || getProductSubtitle(item.id)}
+                        </p>
                       </div>
                       <button
-                        onClick={() => removeItemByKey(item.id, item.size)}
+                        onClick={() => removeFromCart(item.id)}
                         className="text-red-500 hover:text-red-700 transition-colors duration-300"
                       >
                         <Trash2 size={20} />
@@ -178,14 +112,15 @@ const CartPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4 mb-4 text-sm text-slate-gray">
-                      <span>Size: {item.size}</span>
-                      {item.color && <span>Color: {item.color}</span>}
+                      {(item as any).size && <span>Size: {(item as any).size}</span>}
+                      {(item as any).color && <span>Color: {(item as any).color}</span>}
+                      {(item as any).thickness && <span>Thickness: {(item as any).thickness}</span>}
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <button
-                          onClick={() => updateQuantityByKey(item.id, item.size, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gold-champagne transition-colors duration-300"
                         >
                           <Minus size={16} />
@@ -194,7 +129,7 @@ const CartPage: React.FC = () => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantityByKey(item.id, item.size, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gold-champagne transition-colors duration-300"
                         >
                           <Plus size={16} />
@@ -218,7 +153,7 @@ const CartPage: React.FC = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-4">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-28">
               <h3 className="text-xl font-serif font-bold text-deep-indigo mb-6">
                 Order Summary
               </h3>
@@ -266,12 +201,8 @@ const CartPage: React.FC = () => {
 
                 <div className="flex justify-between">
                   <span className="text-slate-gray">Shipping</span>
-                  <span className="font-semibold">
-                    {shipping === 0 ? 'Free' : `₹${shipping}`}
-                  </span>
+                  <span className="font-semibold text-green-600">Free</span>
                 </div>
-
-                {/* Tax removed */}
 
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between text-lg font-bold text-deep-indigo">
@@ -280,15 +211,6 @@ const CartPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Free Shipping Notice */}
-              {subtotal < 20000 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-                  <p className="text-sm text-blue-800">
-                    Add ₹{(20000 - subtotal).toLocaleString()} more for free shipping!
-                  </p>
-                </div>
-              )}
 
               {/* Checkout Button */}
               <Link

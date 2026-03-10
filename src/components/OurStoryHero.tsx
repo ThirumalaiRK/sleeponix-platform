@@ -19,6 +19,19 @@ const OurStoryHero: React.FC = () => {
         </p>
         <div className="w-24 h-px bg-[#d4b47f] mx-auto mt-6"></div>
         <div className="max-w-3xl mx-auto mt-8 px-4">
+          <blockquote className="bg-white/10 backdrop-blur-sm border border-[#d4b47f]/20 rounded-2xl p-6 md:p-8 relative">
+            <svg className="absolute -top-4 -left-4 w-10 h-10 text-[#d4b47f] opacity-80" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+            </svg>
+            <p className="text-lg md:text-xl md:leading-relaxed text-white/90 italic mb-4 font-serif">
+              "Sleeponix, founded by C.R. Vigneshwaran, stands on a proud family legacy of over 50 years in business.
+              With 30 years of experience, we are bringing a revolution to mattresses through sustainability,
+              natural materials, and earthy comfort."
+            </p>
+            <footer className="text-[#d4b47f] font-semibold text-sm tracking-wider uppercase">
+              — C.R. Vigneshwaran, Founder
+            </footer>
+          </blockquote>
         </div>
 
       </div>

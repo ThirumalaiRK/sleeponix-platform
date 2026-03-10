@@ -1,6 +1,6 @@
-import spillow from '../../assets/spillow3.png';
-import pillow1 from '../../assets/pillow1.png'
-import curve3 from '../../assets/curve3.png'
+import spillow from '../../assets/spillow3.webp';
+import pillow1 from '../../assets/pillow1.webp'
+import curve3 from '../../assets/curve3.webp'
 export interface Pillow {
   id: string;
   name: string;

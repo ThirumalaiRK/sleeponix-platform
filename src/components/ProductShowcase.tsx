@@ -4,7 +4,7 @@ import { motion, easeInOut } from 'framer-motion';
 import { ArrowRight, Bed, Sofa, ToyBrick } from 'lucide-react';
 import { mattressData } from './products/mattressData';
 import { pillows } from './products/pillowData';
-import { accessories } from './products/Accessories';
+import { accessories } from './products/accessories';
 
 const categoryIcons = {
   Mattresses: <Bed className="w-8 h-8 text-charcoal-700" />,
@@ -133,7 +133,7 @@ const ProductShowcase: React.FC = () => {
           })}
         </div>
       </div>
-      
+
       {/* Organic Wave Divider - Bottom */}
       <div className="absolute bottom-0 left-0 w-full h-24 translate-y-1/2">
         <svg className="w-full h-full text-white" viewBox="0 0 1440 100" preserveAspectRatio="none">

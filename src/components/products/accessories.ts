@@ -1,5 +1,5 @@
-import waterProof from '../../assets/waterproof.png';
-import elastic from '../../assets/elastic.png';
+import waterProof from '../../assets/waterproof.webp';
+import elastic from '../../assets/elastic.webp';
 
 export interface Accessory {
   id: string;
@@ -10,6 +10,8 @@ export interface Accessory {
   highlights: string[];
   description: string;
   specifications: { [key: string]: string };
+  sizes: { name: string; dimensions: string; price: number }[];
+  related: string[];
 }
 
 export const accessories: Accessory[] = [
@@ -33,6 +35,12 @@ export const accessories: Accessory[] = [
       Care: 'Machine wash cold, tumble dry low',
       Warranty: '5-Year Limited Warranty',
     },
+    sizes: [
+      { name: 'Single', dimensions: '72x36"', price: 1299 },
+      { name: 'Queen', dimensions: '78x60"', price: 1699 },
+      { name: 'King', dimensions: '78x72"', price: 1999 },
+    ],
+    related: ['elastic-fitted-sheet'],
   },
   {
     id: 'elastic-fitted-sheet',
@@ -54,5 +62,11 @@ export const accessories: Accessory[] = [
       Fit: 'Fits mattresses up to 18 inches deep',
       Care: 'Machine wash warm, tumble dry medium',
     },
+    sizes: [
+      { name: 'Single', dimensions: '72x36"', price: 899 },
+      { name: 'Queen', dimensions: '78x60"', price: 1299 },
+      { name: 'King', dimensions: '78x72"', price: 1499 },
+    ],
+    related: ['waterproof-mattress-protector'],
   },
 ];

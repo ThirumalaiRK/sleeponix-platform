@@ -6,8 +6,19 @@ import Testimonials from '../Testimonials';
 import Certifications from '../Certifications';
 import HowItsMade from '../HowItsMade';
 import WhyLatex from '../WhyLatex';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
 
 const HomePage: React.FC = () => {
+  useSEO({
+    title: 'Sleeponix - Premium Natural Latex Mattresses | 100% Organic Sleep Solutions',
+    description: 'Experience nature\'s comfort with Sleeponix premium natural latex mattresses. 100% organic, hypoallergenic, and eco-friendly. 25-year warranty, 365-night trial.',
+    keywords: 'natural latex mattress, organic mattress, eco-friendly sleep, hypoallergenic mattress, luxury bedding India',
+    canonicalPath: '/',
+  });
+
+  // Inject Organization + WebSite schema for Google Knowledge Panel and Sitelinks Search Box
+  useSchema({ type: 'Organization' });
   return (
     <div className="bg-white">
       <Hero />

@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import { Check, Play, Ruler, Book, Phone, Calendar, Users } from 'lucide-react';
+import { useSEO } from '../../hooks/useSEO';
 
 const MeasureBedSize: React.FC = () => {
   const [width, setWidth] = useState('');
   const [length, setLength] = useState('');
   const [suggestedSize, setSuggestedSize] = useState('');
+  const [activeStep, setActiveStep] = useState<number | null>(1);
+
+  useSEO({
+    title: 'How to Measure Your Bed Size | Sleeponix Size Guide',
+    description: 'Use our step-by-step bed size measurement guide & custom size calculator to find the perfect Sleeponix mattress fit. Single, Queen, King or custom sizes.',
+    keywords: 'how to measure mattress size, bed size guide India, custom mattress size, mattress dimensions',
+    canonicalPath: '/measure-bed-size',
+  });
 
   const calculateBestFit = () => {
     const w = parseInt(width);
@@ -78,56 +87,158 @@ const MeasureBedSize: React.FC = () => {
         </div>
       </section>
 
-      {/* HOW TO MEASURE */}
-      <section className="py-16 sm:py-20 lg:py-28">
+      {/* INTERACTIVE 3-STEP MEASUREMENT */}
+      <section className="py-16 sm:py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
-          
-          {/* Heading */}
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 style={{ fontFamily: 'Playfair Display, serif' }} className="text-3xl md:text-4xl font-bold mb-3">
-              How to Measure Your Bed Frame
+          <div className="text-center mb-16">
+            <h2 style={{ fontFamily: 'Playfair Display, serif' }} className="text-3xl md:text-4xl font-bold mb-4 text-[#1B4D3E]">
+              The 3-Step Measurement
             </h2>
-            <p className="text-base sm:text-lg max-w-2xl mx-auto" style={{ color: '#606060' }}>
-              Follow these simple steps before placing your order.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Follow the A, B, C system to get the exact dimensions needed for your custom order.
             </p>
           </div>
 
-          {/* Steps */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-            {[1, 2, 3, 4].map((step, index) => (
-              <div
-                key={step}
-                className="bg-white border border-[#E0E3DF] hover:border-[#C6A878] shadow-sm rounded-xl p-6 sm:p-8 transition-all transform hover:-translate-y-1"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-[#1B4D3E] text-white flex items-center justify-center font-bold text-xl mr-4">
-                    {step}
+            {/* Left: Steps */}
+            <div className="space-y-8">
+              {[
+                { id: 1, label: 'A', title: 'Width', desc: 'Measure from the widest point side-to-side.', fullDesc: 'Measure across the mattress or bed frame from left to right.' },
+                { id: 2, label: 'B', title: 'Length', desc: 'Measure from head to foot, inside the frame.', fullDesc: 'Measure from the headboard to the footboard.' },
+                { id: 3, label: 'C', title: 'Height/Depth', desc: 'Measure the depth of the mattress recess.', fullDesc: 'Measure from the top of the slats/base to the top of the side rail.' }
+              ].map((step) => (
+                <div
+                  key={step.id}
+                  onMouseEnter={() => setActiveStep(step.id)}
+                  onClick={() => setActiveStep(step.id)}
+                  className={`flex gap-6 p-6 rounded-2xl cursor-pointer transition-all duration-300 border-2 ${activeStep === step.id
+                    ? 'bg-[#F2F9F7] border-[#1B4D3E] shadow-lg scale-102 transform translate-x-2'
+                    : 'bg-transparent border-transparent hover:bg-gray-50'
+                    }`}
+                >
+                  <div className={`w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold transition-colors ${activeStep === step.id ? 'bg-[#1B4D3E] text-white' : 'bg-[#E6F0EC] text-[#1B4D3E]'
+                    }`}>
+                    {step.label}
                   </div>
-
-                  {index < 3 ? (
-                    <Ruler size={24} className="text-[#1B4D3E] rotate-0" />
-                  ) : (
-                    <Check size={24} className="text-[#1B4D3E]" />
-                  )}
+                  <div>
+                    <h3 className={`text-xl font-bold mb-2 ${activeStep === step.id ? 'text-[#1B4D3E]' : 'text-gray-900'}`}>{step.title}</h3>
+                    <p className="text-gray-600 font-medium mb-1">{step.desc}</p>
+                    <p className={`text-sm text-gray-500 transition-all duration-300 ${activeStep === step.id ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'}`}>{step.fullDesc}</p>
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                <h3 className="font-bold text-xl mb-2">
-                  {index === 0 && 'Measure the Width'}
-                  {index === 1 && 'Measure the Length'}
-                  {index === 2 && 'Measure the Height'}
-                  {index === 3 && 'Double-Check'}
-                </h3>
+            {/* Right: Interactive SVG Diagram */}
+            <div className="bg-[#F9FAFB] rounded-3xl p-10 flex items-center justify-center relative border border-gray-100 shadow-inner min-h-[400px]">
+              <svg viewBox="0 80 600 350" className="w-full h-full drop-shadow-sm select-none" style={{ maxHeight: '400px' }}>
+                <defs>
+                  <marker id="arrowHeadGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 L0,0" fill="#1B4D3E" />
+                  </marker>
+                  <marker id="arrowHeadGray" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 L0,0" fill="#9CA3AF" />
+                  </marker>
+                </defs>
 
-                <p className="text-sm" style={{ color: '#606060' }}>
-                  {index === 0 && 'Side to Side'}
-                  {index === 1 && 'Head to Foot'}
-                  {index === 2 && '(Optional)'}
-                  {index === 3 && 'Your Measurements'}
-                </p>
-              </div>
-            ))}
+                {/* --- BASE BED FRAME (Wireframe Style) --- */}
 
+                {/* Back Headboard (Partially Hidden) */}
+                <path d="M140,180 L140,100 L200,60 L200,140" fill="none" stroke="#E5E7EB" strokeWidth="1" />
+
+                {/* Main Mattress Block */}
+                {/* Top Surface */}
+                <path d="M140,180 L440,180 L520,120 L200,120 L140,180 Z"
+                  fill={activeStep === 1 || activeStep === 2 ? "#FFFFFF" : "#F9FAFB"}
+                  stroke="#D1D5DB" strokeWidth="1.5" />
+
+                {/* Front Face (Long Side = Length, Step B) */}
+                <path d="M140,180 L440,180 L440,260 L140,260 Z"
+                  fill={activeStep === 2 ? "#E6F0EC" : "#FFFFFF"}
+                  stroke={activeStep === 2 ? "#1B4D3E" : "#D1D5DB"}
+                  strokeWidth={activeStep === 2 ? 2 : 1.5}
+                  className="transition-all duration-300"
+                />
+
+                {/* Side Face (Short Side = Width, Step A) */}
+                <path d="M440,180 L520,120 L520,200 L440,260 Z"
+                  fill={activeStep === 1 ? "#E6F0EC" : "#F3F4F6"}
+                  stroke={activeStep === 1 ? "#1B4D3E" : "#D1D5DB"}
+                  strokeWidth={activeStep === 1 ? 2 : 1.5}
+                  className="transition-all duration-300"
+                />
+
+                {/* Headboard (Visible Part) */}
+                {/* Front Face */}
+                <path d="M140,180 L140,100 L200,60 L200,120" fill="none" stroke="#D1D5DB" strokeWidth="1.5" />
+                {/* Side Thickness */}
+                <path d="M200,60 L210,60 L210,125" fill="none" stroke="#E5E7EB" strokeWidth="1" />
+
+
+                {/* --- DIMENSION INDICATORS --- */}
+
+                {/* A: Width Indicator (Short Side / Side Face) */}
+                <g style={{ transition: 'all 0.4s ease', opacity: activeStep === 1 ? 1 : 0.3 }}>
+                  {/* Extension Lines - projected out */}
+                  <line x1="445" y1="265" x2="485" y2="295" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+                  <line x1="525" y1="205" x2="565" y2="235" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+
+                  {/* Arrow Line */}
+                  <line x1="480" y1="290" x2="560" y2="230"
+                    stroke={activeStep === 1 ? "#1B4D3E" : "#9CA3AF"}
+                    strokeWidth="2"
+                    markerEnd={activeStep === 1 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"}
+                    markerStart={activeStep === 1 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"} />
+
+                  {/* Label */}
+                  <rect x="500" y="255" width="90" height="30" rx="4" fill="#FFFFFF" fillOpacity="0.8" />
+                  <text x="545" y="275" textAnchor="middle" fill={activeStep === 1 ? "#1B4D3E" : "#6B7280"} fontSize="16" fontWeight="bold">A (Width)</text>
+                </g>
+
+
+                {/* B: Length Indicator (Long Side / Front Face) */}
+                <g style={{ transition: 'all 0.4s ease', opacity: activeStep === 2 ? 1 : 0.3 }}>
+                  {/* Extension Lines */}
+                  <line x1="140" y1="265" x2="140" y2="310" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+                  <line x1="440" y1="265" x2="440" y2="310" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+
+                  {/* Arrow Line */}
+                  <line x1="145" y1="295" x2="435" y2="295"
+                    stroke={activeStep === 2 ? "#1B4D3E" : "#9CA3AF"}
+                    strokeWidth="2"
+                    markerEnd={activeStep === 2 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"}
+                    markerStart={activeStep === 2 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"} />
+
+                  {/* Label */}
+                  <rect x="250" y="275" width="90" height="40" rx="4" fill="#FFFFFF" fillOpacity="0.8" />
+                  <text x="295" y="300" textAnchor="middle" fill={activeStep === 2 ? "#1B4D3E" : "#6B7280"} fontSize="16" fontWeight="bold">B (Length)</text>
+                </g>
+
+
+                {/* C: Height Indicator (Vertical Left Side) */}
+                <g style={{ transition: 'all 0.4s ease', opacity: activeStep === 3 ? 1 : 0.3 }}>
+                  {/* Extension Lines */}
+                  <line x1="140" y1="180" x2="95" y2="180" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+                  <line x1="140" y1="260" x2="95" y2="260" stroke="#D1D5DB" strokeWidth="1" strokeDasharray="4" />
+
+                  {/* Arrow Line */}
+                  <line x1="105" y1="185" x2="105" y2="255"
+                    stroke={activeStep === 3 ? "#1B4D3E" : "#9CA3AF"}
+                    strokeWidth="2"
+                    markerEnd={activeStep === 3 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"}
+                    markerStart={activeStep === 3 ? "url(#arrowHeadGreen)" : "url(#arrowHeadGray)"} />
+
+                  {/* Label */}
+                  <rect x="65" y="205" width="30" height="90" rx="4" fill="#FFFFFF" fillOpacity="0.8" />
+                  <text x="80" y="250" textAnchor="middle" fill={activeStep === 3 ? "#1B4D3E" : "#6B7280"} fontSize="16" fontWeight="bold" transform="rotate(-90 80 250)">C (Depth)</text>
+
+                  {/* Highlight Top Edge to show Depth Context */}
+                  <path d="M140,180 L440,180" stroke={activeStep === 3 ? "#1B4D3E" : "none"} strokeWidth="3" />
+                </g>
+
+              </svg>
+            </div>
           </div>
         </div>
       </section>
@@ -135,7 +246,7 @@ const MeasureBedSize: React.FC = () => {
       {/* SIZE REFERENCE GUIDE */}
       <section className="bg-[#F7F7F5] py-12">
         <div className="container mx-auto px-4 sm:px-6">
-          
+
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold flex items-center justify-center" style={{ fontFamily: 'Playfair Display, serif' }}>
               <Book size={28} className="mr-3" />

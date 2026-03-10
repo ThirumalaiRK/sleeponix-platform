@@ -1,5 +1,5 @@
 // ------------------------------------------------------
-// ORDERS TABLE — SINGLE MERGED FILE (ERROR-FREE)
+// ORDERS TABLE — PAGINATED & REFACTORED
 // ------------------------------------------------------
 
 import React, {
@@ -9,110 +9,44 @@ import React, {
   useRef,
 } from "react";
 import { supabase } from "../../supabaseClient";
-import { Order, OrderStatus, OrderItem } from "../../types";
+// Import from adminTypes to ensure we use the admin-specific or re-exported types
+import { Order, OrderStatus } from "../adminTypes";
+import { transformSupabaseOrder } from "../utils/orderUtils"; // New Utility
 import OrderRow from "./OrderRow";
 import GenerateDocumentsModal from "./GenerateDocumentsModal";
 import OrderDetailsModal from "./OrderDetailsModal";
 import toast from "react-hot-toast";
 import { initialEmailTemplates } from "../../emailTemplates";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 // ------------------------------------------------------
 // PROPS
 // ------------------------------------------------------
 interface OrdersTableProps {
-  limit?: number;
+  limit?: number; // Optional override for initial limit
   searchQuery?: string;
 }
-
-// ------------------------------------------------------
-// TRANSFORM SUPABASE → ORDER TYPE
-// ------------------------------------------------------
-const transformSupabaseOrder = (o: any): Order => {
-  const addressString = o.customer_address || "";
-
-  const cleanedParts = addressString
-    .split(",")
-    .map((p: string) => p.trim())
-    .filter((p: string) => p && p.toLowerCase() !== "undefined");
-
-  const addressDetails = {
-    address1: cleanedParts[0] || "",
-    city: cleanedParts[1] || "",
-    state: cleanedParts[2] || "",
-    postalCode: cleanedParts[3] || "",
-  };
-
-  if (addressDetails.state) {
-    const lastSpace = addressDetails.state.lastIndexOf(" ");
-    if (lastSpace !== -1) {
-      const maybePin = addressDetails.state.substring(lastSpace + 1);
-      if (/^\d{6}$/.test(maybePin)) {
-        addressDetails.state = addressDetails.state.substring(0, lastSpace);
-        addressDetails.postalCode = maybePin;
-      }
-    }
-  }
-
-  const subtotal = Array.isArray(o.order_items)
-    ? o.order_items.reduce(
-        (sum: number, item: any) =>
-          sum + item.quantity * (item.price || 0),
-        0
-      )
-    : 0;
-
-  const shipping_fee = (o.total_amount || 0) - subtotal;
-
-  return {
-    id: o.id,
-    order_number: o.order_number,
-    order_id: `SPX-ORD-${String(o.order_number).padStart(6, "0")}`,
-    created_at: o.created_at,
-    customer_details: {
-      name: o.customer_name,
-      email: o.customer_email,
-      phone: o.customer_phone,
-      address: cleanedParts.join(", "),
-      address1: addressDetails.address1,
-      city: addressDetails.city,
-      state: addressDetails.state,
-      postalCode: addressDetails.postalCode,
-    },
-    total_amount: o.total_amount,
-    subtotal,
-    shipping_fee,
-    status: o.status,
-    order_items: Array.isArray(o.order_items)
-      ? o.order_items.map(
-          (i: any): OrderItem => ({
-            id: i.id || 0,
-            product_id: i.product_id || "",
-            quantity: i.quantity,
-            price: i.price || 0,
-            name: i.product_name || "Unknown Product",
-          })
-        )
-      : [],
-  };
-};
 
 // ------------------------------------------------------
 // COMPONENT
 // ------------------------------------------------------
 const OrdersTable: React.FC<OrdersTableProps> = ({
-  limit,
+  limit: initialLimit = 20,
   searchQuery = "",
 }) => {
+  // State
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedOrderForDocs, setSelectedOrderForDocs] =
-    useState<Order | null>(null);
-  const [selectedOrderForDetails, setSelectedOrderForDetails] =
-    useState<Order | null>(null);
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(initialLimit);
+  const [totalOrders, setTotalOrders] = useState(0);
 
+  // Modals & Selection
+  const [selectedOrderForDocs, setSelectedOrderForDocs] = useState<Order | null>(null);
+  const [selectedOrderForDetails, setSelectedOrderForDetails] = useState<Order | null>(null);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
@@ -127,31 +61,39 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
 
     try {
       const { data, error } = await supabase.functions.invoke("admin-api", {
-        body: { action: "GET_ALL_ORDERS" },
+        body: {
+          action: "GET_ALL_ORDERS",
+          payload: {
+            page,
+            limit,
+            searchQuery
+          }
+        },
       });
 
       if (error) throw error;
 
-      const fetched = (data?.orders || []).map(transformSupabaseOrder);
-      const limited = limit ? fetched.slice(0, limit) : fetched;
+      // Handle the response structure { orders, total, page, limit }
+      const fetchedOrders = (data.orders || []).map(transformSupabaseOrder);
 
-      setOrders(limited);
+      setOrders(fetchedOrders);
+      setTotalOrders(data.total || 0);
 
-      const q = searchQuery.toLowerCase();
-      setFilteredOrders(
-        limited.filter(
-          (o) =>
-            o.customer_details.name?.toLowerCase().includes(q) ||
-            o.order_id?.toLowerCase().includes(q)
-        )
-      );
+      // If we are on a page that has no results but total > 0 (e.g. after search), reset to page 1?
+      // Actually, if searchQuery changes, valid useEffect dependency should reset page.
+
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to load orders");
     } finally {
       setLoading(false);
     }
-  }, [limit, searchQuery]);
+  }, [page, limit, searchQuery]);
+
+  // Reset page when search query changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
 
   // ------------------------------------------------------
   // REALTIME SYNC
@@ -164,7 +106,10 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        () => setTimeout(fetchOrders, 500)
+        () => {
+          // Debounce fetch slightly to avoid rapid re-fetches
+          setTimeout(fetchOrders, 500);
+        }
       )
       .subscribe();
 
@@ -174,7 +119,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   }, [fetchOrders]);
 
   // ------------------------------------------------------
-  // STATUS UPDATE + EMAIL (FIXED PAYLOAD)
+  // STATUS UPDATE + EMAIL
   // ------------------------------------------------------
   const handleStatusChange = useCallback(
     async (orderId: string, newStatus: OrderStatus) => {
@@ -188,7 +133,6 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
       );
 
       try {
-        // ✅ FIXED PAYLOAD (matches Edge Function)
         const { error } = await supabase.functions.invoke("admin-api", {
           body: {
             action: "UPDATE_ORDER_STATUS",
@@ -206,7 +150,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
         const order = original.find((o) => o.id === orderId);
         const template =
           initialEmailTemplates[
-            newStatus as keyof typeof initialEmailTemplates
+          newStatus as keyof typeof initialEmailTemplates
           ];
 
         if (order && template && order.customer_details.email) {
@@ -251,6 +195,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
               className="bg-red-600 text-white px-4 py-2 rounded"
               onClick={async () => {
                 toast.dismiss(t.id);
+                // Optimistic update
                 setOrders((prev) =>
                   prev.filter((o) => o.id !== orderId)
                 );
@@ -267,6 +212,8 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                   );
                   if (error) throw error;
                   toast.success("Order deleted");
+                  // Refresh to ensure counts are correct
+                  fetchOrders();
                 } catch {
                   setOrders(original);
                   toast.error("Delete failed");
@@ -285,7 +232,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
         </div>
       ));
     },
-    [orders]
+    [orders, fetchOrders]
   );
 
   // ------------------------------------------------------
@@ -297,45 +244,91 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   };
 
   // ------------------------------------------------------
-  // STATES
+  // PAGINATION HANDLERS
   // ------------------------------------------------------
-  if (loading && orders.length === 0)
-    return <div className="p-8 text-center">Loading orders...</div>;
+  const totalPages = Math.ceil(totalOrders / limit);
 
-  if (error)
-    return <div className="p-8 text-center text-red-600">{error}</div>;
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(p => p + 1);
+  };
 
-  if (filteredOrders.length === 0)
-    return (
-      <div className="p-12 text-center">
-        <h3 className="text-xl font-serif">
-          {searchQuery ? "No matching orders" : "No orders yet"}
-        </h3>
-      </div>
-    );
+  const handlePrevPage = () => {
+    if (page > 1) setPage(p => p - 1);
+  };
 
   // ------------------------------------------------------
   // RENDER
   // ------------------------------------------------------
+  if (loading && orders.length === 0)
+    return <div className="p-8 text-center text-[#5f4b3b]">Loading orders...</div>;
+
+  if (error)
+    return <div className="p-8 text-center text-red-600">{error}</div>;
+
   return (
-    <div className="orders-table-container">
-      <div className="grid grid-cols-1">
-        {filteredOrders.map((order) => (
-          <OrderRow
-            key={order.id}
-            order={order}
-            onViewDetails={() => handleViewDetails(order)}
-            onGenerateDocs={() => {
-              setSelectedOrderForDocs(order);
-              setIsDocsModalOpen(true);
-            }}
-            onStatusChange={(status) =>
-              handleStatusChange(order.id, status)
-            }
-            onDeleteOrder={() => handleDeleteOrder(order.id)}
-          />
-        ))}
-      </div>
+    <div className="orders-table-container pb-4">
+      {orders.length === 0 ? (
+        <div className="p-12 text-center">
+          <h3 className="text-xl font-serif text-[#143d29]">
+            {searchQuery ? "No matching orders" : "No orders yet"}
+          </h3>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1">
+          {orders.map((order) => (
+            <OrderRow
+              key={order.id}
+              order={order}
+              onViewDetails={() => handleViewDetails(order)}
+              onGenerateDocs={() => {
+                setSelectedOrderForDocs(order);
+                setIsDocsModalOpen(true);
+              }}
+              onStatusChange={(status) =>
+                handleStatusChange(order.id, status)
+              }
+              onDeleteOrder={() => handleDeleteOrder(order.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* PAGINATION CONTROLS */}
+      {totalOrders > 0 && (
+        <div className="flex items-center justify-between px-4 py-4 mt-4 border-t border-[#eadfcc]">
+          <span className="text-sm text-[#5f4b3b]">
+            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, totalOrders)} of {totalOrders} results
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={page === 1}
+              className={`p-2 rounded-md border ${page === 1
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-[#eadfcc] text-[#143d29] hover:bg-[#143d29] hover:text-white"
+                } transition-colors`}
+            >
+              <FiChevronLeft />
+            </button>
+
+            <span className="text-sm font-medium text-[#143d29]">
+              Page {page} of {totalPages || 1}
+            </span>
+
+            <button
+              onClick={handleNextPage}
+              disabled={page >= totalPages}
+              className={`p-2 rounded-md border ${page >= totalPages
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-[#eadfcc] text-[#143d29] hover:bg-[#143d29] hover:text-white"
+                } transition-colors`}
+            >
+              <FiChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
 
       {isDocsModalOpen && selectedOrderForDocs && (
         <GenerateDocumentsModal
@@ -348,6 +341,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
         <OrderDetailsModal
           order={selectedOrderForDetails}
           onClose={() => setIsDetailsModalOpen(false)}
+          onUpdate={fetchOrders}
         />
       )}
     </div>

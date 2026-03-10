@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Leaf, Wind, Shield, Heart, Star, CheckCircle, Minus, Plus, ChevronDown } from 'lucide-react';
+import { Leaf, Wind, Shield, Heart, Star, CheckCircle, Minus, Plus, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lightbox from "yet-another-react-lightbox";
@@ -7,15 +7,17 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useCart } from '../../context/CartContext';
-import heaven1 from '../../assets/download.png';
-import heaven from '../../assets/heaven.png';
-import heaven2 from '../../assets/mattress.png';
-import heaven4 from '../../assets/heaven4.png';
-import heaven5 from '../../assets/heaven5.png';
-import spinerelax from '../../assets/spinerelax.png';
-import ortho from '../../assets/ortho.png';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
+import heaven1 from '../../assets/download.webp';
+import heaven from '../../assets/heaven.webp';
+import heaven2 from '../../assets/mattress.webp';
+import heaven4 from '../../assets/heaven4.webp';
+import heaven5 from '../../assets/heaven5.webp';
+import spinerelax from '../../assets/spinerelax.webp';
+import ortho from '../../assets/ortho.webp';
 
 const priceData = {
     "72\" X 36\"": { "4\"": 23599, "5\"": 29599, "6\"": 35599, "8\"": 47499 },
@@ -46,7 +48,14 @@ const productImages = [
 const sizes = Object.keys(priceData);
 const thicknesses = ["4\"", "5\"", "6\"", "8\""];
 
-const AccordionItem = ({ title, children, isOpen, onClick }) => (
+interface AccordionItemProps {
+    title: string;
+    children: React.ReactNode;
+    isOpen: boolean;
+    onClick: () => void;
+}
+
+const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, onClick }) => (
     <div className="border-b border-gray-200">
         <button
             className="w-full flex justify-between items-center py-4 text-left"
@@ -71,6 +80,23 @@ const HeveaHeaven: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'description' | 'features'>('description');
     const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
 
+    useSEO({
+        title: 'Hevea Heaven Natural Latex Mattress | Sleeponix - 85 Density Pincore',
+        description: 'Buy Hevea Heaven 100% natural pincore latex mattress. 85 density, orthopedic support, hypoallergenic, 10-year warranty. Multiple sizes & thickness options. Free delivery.',
+        keywords: 'hevea heaven mattress, natural latex mattress price, organic latex mattress India, 85 density latex mattress',
+        canonicalPath: '/products/hevea-heaven',
+    });
+    useSchema({
+        type: 'Product',
+        name: 'Hevea Heaven Natural Latex Mattress',
+        description: '85 Density 100% Natural Pincore Latex Mattress. Orthopedic support, hypoallergenic, breathable, 10-year warranty.',
+        image: '/assets/heaven.webp',
+        price: 23599,
+        rating: 4.9,
+        reviewCount: 120,
+        url: '/products/hevea-heaven',
+    });
+
     const startAutoRotate = () => {
         stopAutoRotate();
         autoRotateRef.current = setInterval(() => {
@@ -93,7 +119,7 @@ const HeveaHeaven: React.FC = () => {
         startAutoRotate();
     };
 
-    const getPrice = () => priceData[selectedSize]?.[selectedThickness] || 0;
+    const getPrice = () => (priceData as any)[selectedSize]?.[selectedThickness] || 0;
 
     const handleAddToCart = () => {
         if (!selectedSize || !selectedThickness) {
@@ -102,16 +128,17 @@ const HeveaHeaven: React.FC = () => {
         }
         setWarning('');
         addToCart({
-            product_id: `hevea-heaven-${selectedSize}-${selectedThickness}`,
+            id: `hevea-heaven-${selectedSize}-${selectedThickness}`,
             name: "HEVEA HEAVEN",
+            description: "85 Density 100% Natural Pincore Latex",
+            alt: "Hevea Heaven Natural Latex Mattress",
             size: selectedSize,
             thickness: selectedThickness,
             price: getPrice(),
-            quantity,
             warranty: "10 Years",
-            category: "Natural Latex",
+            category: "Mattresses",
             image: productImages[0].src,
-        });
+        }, quantity);
         setCartOpen(true);
     };
 
@@ -353,8 +380,8 @@ const HeveaHeaven: React.FC = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
                                     className={`px-8 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${activeTab === tab.id
-                                            ? 'bg-[#1C2635] text-white shadow-lg'
-                                            : 'text-stone-500 hover:text-[#1C2635]'
+                                        ? 'bg-[#1C2635] text-white shadow-lg'
+                                        : 'text-stone-500 hover:text-[#1C2635]'
                                         }`}
                                 >
                                     {tab.label}
@@ -471,7 +498,7 @@ const HeveaHeaven: React.FC = () => {
                             <div className="p-8 text-center relative">
                                 <h3 className="text-2xl font-serif font-bold text-[#1C2635] mb-2">SpineRelax</h3>
                                 <p className="text-stone-500 mb-6">Advanced Orthopedic Memory Foam Support</p>
-                                <Link to="/products/spinerelax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
+                                <Link to="/products/spine-relax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
                                     View Product
                                 </Link>
                             </div>

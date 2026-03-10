@@ -1,8 +1,8 @@
-import heveaHeaven from '../../assets/heaven.png';
-import spineRelax from '../../assets/spinerelax.png';
-import bliss from '../../assets/bliss.png';
-import cocoon from '../../assets/cocoon.png';
-import ortho from '../../assets/ortho.png';
+import heveaHeaven from '../../assets/heaven.webp';
+import spineRelax from '../../assets/spinerelax.webp';
+import bliss from '../../assets/bliss.webp';
+import cocoon from '../../assets/cocoon.webp';
+import ortho from '../../assets/ortho.webp';
 
 export const mattressData = [
   {
@@ -21,7 +21,7 @@ export const mattressData = [
   {
     id: 'spinerelax',
     name: 'SpineRelax',
-    href: '/products/SpineRelax',
+    href: '/products/spine-relax',
     description: 'Dual-Layer Support for optimal spine alignment.',
     price: 22000,
     features: [

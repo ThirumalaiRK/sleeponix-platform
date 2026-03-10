@@ -1,5 +1,5 @@
-import watercover from '../../assets/watercover.png'
-import elasticfittedsheet from '../../assets/elasticfit.png'
+import watercover from '../../assets/watercover.webp'
+import elasticfittedsheet from '../../assets/elasticfit.webp'
 export interface Accessory {
   id: string;
   name: string;

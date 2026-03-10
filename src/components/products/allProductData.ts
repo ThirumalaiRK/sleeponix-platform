@@ -1,13 +1,13 @@
-import watercover from '../../assets/watercover.png'
-import elasticfittedsheet from '../../assets/elasticfit.png'
-import pillow1 from '../../assets/pillow1.png'
-import spillow3 from '../../assets/spillow3.png'
-import curve3 from '../../assets/curve3.png'
-import heaven from '../../assets/heaven.png'
-import spinerelax from '../../assets/spinerelax.png'
-import orthobed from '../../assets/orthobed.png'
-import bliss from '../../assets/bliss.png'
-import cocoon from '../../assets/cocoon.png'
+import watercover from '../../assets/watercover.webp'
+import elasticfittedsheet from '../../assets/elasticfit.webp'
+import pillow1 from '../../assets/pillow1.webp'
+import spillow3 from '../../assets/spillow3.webp'
+import curve3 from '../../assets/curve3.webp'
+import heaven from '../../assets/heaven.webp'
+import spinerelax from '../../assets/spinerelax.webp'
+import orthobed from '../../assets/orthobed.webp'
+import bliss from '../../assets/bliss.webp'
+import cocoon from '../../assets/cocoon.webp'
 
 export interface Product {
   id: string;
@@ -17,7 +17,7 @@ export interface Product {
   alt:  string;
   price: number;
   oldPrice?: number;
-  category: 'Mattress' | 'Pillow' | 'Accessory';
+  category: 'Mattresses' | 'Pillows' | 'Accessories';
   tags?: string[];
   badges?: string[];
   rating?: number;
@@ -48,7 +48,7 @@ export const allProducts: Product[] = [
     alt: '',
     price: 34999,
     oldPrice: 39999,
-    category: 'Mattress',
+    category: 'Mattresses',
     tags: ['Natural', 'Latex', 'Breathable'],
     badges: ['Bestseller'],
     rating: 4.8,
@@ -56,12 +56,12 @@ export const allProducts: Product[] = [
   {
     id: 'spinerelax',
     name: 'SpineRelax',
-    href: '/products/spinerelax',
+    href: '/products/spine-relax',
     description: 'Dual-Layer Support',
     image: spinerelax,
     alt:'',
     price: 28999,
-    category: 'Mattress',
+    category: 'Mattresses',
     tags: ['Orthopedic', 'Memory Foam'],
     rating: 4.6,
   },
@@ -73,7 +73,7 @@ export const allProducts: Product[] = [
     image: bliss,
     alt:'',
     price: 24999,
-    category: 'Mattress',
+    category: 'Mattresses',
     tags: ['Latex', 'Comfort'],
     badges: ['New'],
     rating: 4.5,
@@ -87,7 +87,7 @@ export const allProducts: Product[] = [
     alt:'',
     price: 21999,
     oldPrice: 24999,
-    category: 'Mattress',
+    category: 'Mattresses',
     tags: ['Foam', 'Latex', 'Support'],
     badges: ['Sale'],
     rating: 4.7,
@@ -100,7 +100,7 @@ export const allProducts: Product[] = [
     image: orthobed,
     alt:'',
     price: 31999,
-    category: 'Mattress',
+    category: 'Mattresses',
     tags: ['Orthopedic', 'Support', 'Firm'],
     rating: 4.9,
   },
@@ -114,7 +114,7 @@ export const allProducts: Product[] = [
     image: spillow3,
     alt:'',
     description: 'Our Shredded Latex Pillow is filled with fine-milled 100% natural latex, offering adjustable comfort that contours to your head and neck. It provides excellent air circulation, keeping you cool throughout the night. The removable, washable cotton cover ensures a fresh and clean sleep surface.',
-    category: 'Pillow',
+    category: 'Pillows',
     tags: ['Natural', 'Latex', 'Adjustable'],
     rating: 4.7,
   },
@@ -127,7 +127,7 @@ export const allProducts: Product[] = [
     image: pillow1,
     alt:'',
     description: 'The Standard Latex Pillow offers a classic, resilient feel with consistent support. Made from a solid core of natural latex, its pin-core design promotes airflow for a cooler sleep. It’s the perfect choice for those who appreciate a traditional pillow shape with the benefits of latex.',
-    category: 'Pillow',
+    category: 'Pillows',
     tags: ['Latex', 'Support', 'Firm'],
     rating: 4.8,
     badges: ['Bestseller'],
@@ -141,7 +141,7 @@ export const allProducts: Product[] = [
     image: curve3,
     alt:'',
     description: 'Designed to follow the natural curve of your body, the Curves Latex Pillow provides exceptional support for your head, neck, and shoulders. Its ergonomic shape helps align your spine, reducing pressure points and alleviating pain. The dual-height profile suits both back and side sleepers.',
-    category: 'Pillow',
+    category: 'Pillows',
     tags: ['Ergonomic', 'Neck Support'],
     rating: 4.9,
   },
@@ -153,7 +153,7 @@ export const allProducts: Product[] = [
     description: 'Our premium Waterproof Mattress Protector keeps your bed safe from spills, stains, and moisture without compromising comfort. Designed with breathable fabric and a noiseless surface for uninterrupted sleep.',
     image: watercover,
     alt:'',
-    category: 'Accessory',
+    category: 'Accessories',
     price: 2499,
     oldPrice: 2999,
     tags: ['Waterproof', 'Breathable'],
@@ -167,7 +167,7 @@ export const allProducts: Product[] = [
     description: 'Experience wrinkle-free comfort with our Elastic Fitted Sheet, crafted with ultra-soft fabric and a perfect elastic grip. Designed to stay in place all night, ensuring a smooth, cozy sleep experience.',
     image: elasticfittedsheet,
     alt:'',
-    category: 'Accessory',
+    category: 'Accessories',
     price: 1999,
     oldPrice: 2499,
     tags: ['Wrinkle-free', 'Soft'],

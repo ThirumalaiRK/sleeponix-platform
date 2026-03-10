@@ -9,13 +9,15 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { Toaster } from "react-hot-toast";
 import { useCart } from '../../context/CartContext';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
 
-import spinerelax from '../../assets/spinerelax.png';
-import spine from '../../assets/spine.png';
-import spine2 from '../../assets/spine2.png';
-import spine3 from '../../assets/spine3.png';
-import spine5 from '../../assets/spine5.png';
-import ortho from '../../assets/ortho.png';
+import spinerelax from '../../assets/spinerelax.webp';
+import spine from '../../assets/spine.webp';
+import spine2 from '../../assets/spine2.webp';
+import spine3 from '../../assets/spine3.webp';
+import spine5 from '../../assets/spine5.webp';
+import ortho from '../../assets/ortho.webp';
 
 const priceData = {
   "72\" X 36\"": { "4\"": 28999, "5\"": 29599, "6\"": 35599, "8\"": 47499 },
@@ -38,7 +40,14 @@ const productImages = [
 const sizes = Object.keys(priceData);
 const thicknesses = ["4\"", "5\"", "6\"", "8\""];
 
-const AccordionItem = ({ title, children, isOpen, onClick }) => (
+interface AccordionItemProps {
+  title: string;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClick: () => void;
+}
+
+const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, onClick }) => (
   <div className="border-b border-gray-200">
     <button
       className="w-full flex justify-between items-center py-4 text-left"
@@ -57,6 +66,23 @@ const AccordionItem = ({ title, children, isOpen, onClick }) => (
 const SpineRelax: React.FC = () => {
   const { addToCart, setCartOpen } = useCart();
 
+  useSEO({
+    title: 'SpineRelax Orthopedic Mattress | Sleeponix — Dual-Layer Back Support',
+    description: 'Buy SpineRelax orthopedic mattress for superior spinal alignment & back support. Dual-layer memory foam and orthopedic core. 10-year warranty. Free delivery across India.',
+    keywords: 'orthopaedic mattress India, back pain mattress, spinal alignment mattress, memory foam orthopedic',
+    canonicalPath: '/products/spine-relax',
+  });
+  useSchema({
+    type: 'Product',
+    name: 'SpineRelax Dual-Layer Orthopedic Mattress',
+    description: 'Dual-Layer Orthopedic Mattress with memory foam comfort layer and high-density core for perfect spinal alignment. 10-year warranty.',
+    image: '/assets/spinerelax.webp',
+    price: 28999,
+    rating: 4.6,
+    reviewCount: 89,
+    url: '/products/spine-relax',
+  });
+
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [selectedThickness, setSelectedThickness] = useState(thicknesses[0]);
   const [currentPrice, setCurrentPrice] = useState(0);
@@ -72,7 +98,7 @@ const SpineRelax: React.FC = () => {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const newPrice = priceData[selectedSize]?.[selectedThickness] || 0;
+    const newPrice = (priceData as any)[selectedSize]?.[selectedThickness] || 0;
     setCurrentPrice(newPrice);
   }, [selectedSize, selectedThickness]);
 
@@ -105,7 +131,7 @@ const SpineRelax: React.FC = () => {
       thickness: selectedThickness,
       price: currentPrice,
       warranty: "10 Years",
-      category: "Mattress",
+      category: "Mattresses",
       image: productImages[0].src,
       description: "Dual-Layer Orthopedic Comfort",
       alt: "SPINE RELAX Mattress",

@@ -9,13 +9,15 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { Toaster, toast } from "react-hot-toast";
 import { useCart } from '../../context/CartContext'
-import orthobed from '../../assets/orthobed.png';
-import ortho from '../../assets/ortho.png';
-import ortho2 from '../../assets/ortho2.png';
-import ortho5 from '../../assets/ortho5.png';
-import ortho3 from '../../assets/ortho3.png';
-import spinerelax from '../../assets/spinerelax.png';
-import heaven from '../../assets/heaven.png';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
+import orthobed from '../../assets/orthobed.webp';
+import ortho from '../../assets/ortho.webp';
+import ortho2 from '../../assets/ortho2.webp';
+import ortho5 from '../../assets/ortho5.webp';
+import ortho3 from '../../assets/ortho3.webp';
+import spinerelax from '../../assets/spinerelax.webp';
+import heaven from '../../assets/heaven.webp';
 
 const orthoPrices = {
   '182.9 x 91.4': { '5': 15999, '6': 17999 },
@@ -68,6 +70,23 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, 
 
 const Ortho: React.FC = () => {
   const { addToCart, setCartOpen } = useCart();
+
+  useSEO({
+    title: 'Ortho Firm Mattress | Sleeponix — Medical Grade Back Support',
+    description: 'Buy Ortho firm orthopedic mattress for chronic back pain relief. Medical-grade rebonded foam with anti-sagging technology. 5-year warranty. Free delivery India.',
+    keywords: 'orthopedic firm mattress, back pain relief mattress, rebonded foam mattress, firm mattress India',
+    canonicalPath: '/products/ortho',
+  });
+  useSchema({
+    type: 'Product',
+    name: 'Ortho Firm Orthopedic Mattress',
+    description: 'Medical-grade rebonded foam orthopedic mattress for firm spinal support and chronic back pain relief. Anti-sagging technology, 5-year warranty.',
+    image: '/assets/ortho.webp',
+    price: 15999,
+    rating: 4.8,
+    reviewCount: 95,
+    url: '/products/ortho',
+  });
   const [selectedSize, setSelectedSize] = useState<string>(sizes[0]);
   const [selectedThickness, setSelectedThickness] = useState<string>(thicknesses[0]);
   const [quantity, setQuantity] = useState(1);
@@ -124,7 +143,7 @@ const Ortho: React.FC = () => {
       description: 'Triple-Layer Comfort',
       alt: 'Ortho Mattress',
       warranty: "5 Years",
-      category: "Mattress",
+      category: "Mattresses",
     }, quantity);
     toast.success(`✅ ${quantity} x ORTHO (${selectedSize} / ${selectedThickness}) added to your cart!`);
     setCartOpen(true);
@@ -487,7 +506,7 @@ const Ortho: React.FC = () => {
               <div className="p-8 text-center relative">
                 <h3 className="text-2xl font-serif font-bold text-[#1C2635] mb-2">SpineRelax</h3>
                 <p className="text-stone-500 mb-6">Dual-Layer Orthopedic Comfort</p>
-                <Link to="/products/spinerelax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
+                <Link to="/products/spine-relax" className="inline-block px-8 py-3 rounded-full border-2 border-[#1C2635] text-[#1C2635] font-bold hover:bg-[#1C2635] hover:text-white transition-all duration-300">
                   View Product
                 </Link>
               </div>

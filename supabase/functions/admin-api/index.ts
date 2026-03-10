@@ -205,10 +205,15 @@ serve(async (req) => {
       }
 
       /* ===============================
-         GET ALL ORDERS
+         GET ALL ORDERS (PAGINATED)
       =============================== */
       case "GET_ALL_ORDERS": {
-        const { data: orders, error } = await supabaseAdmin
+        const { page = 1, limit = 20, searchQuery = "" } = payload ?? {};
+        
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
+
+        let query = supabaseAdmin
           .from("orders")
           .select(
             `
@@ -236,9 +241,22 @@ serve(async (req) => {
               price,
               product_name
             )
-          `
+          `,
+            { count: "exact" }
           )
-          .order("created_at", { ascending: false });
+          .order("created_at", { ascending: false })
+          .range(from, to);
+
+        if (searchQuery) {
+          const isNumeric = /^\d+$/.test(searchQuery.trim());
+          if (isNumeric) {
+             query = query.eq('order_number', searchQuery.trim());
+          } else {
+             query = query.ilike('customer_name', `%${searchQuery.trim()}%`);
+          }
+        }
+
+        const { data: orders, count, error } = await query;
 
         if (error) {
           return new Response(
@@ -250,7 +268,7 @@ serve(async (req) => {
           );
         }
 
-        return new Response(JSON.stringify({ orders }), {
+        return new Response(JSON.stringify({ orders, total: count, page, limit }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -312,6 +330,50 @@ serve(async (req) => {
         console.log("📧 EMAIL", { to, subject });
 
         return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      /* ===============================
+         UPDATE SHIPPING INFO
+      =============================== */
+      case "UPDATE_SHIPPING_INFO": {
+        const { orderId, courierName, trackingId, trackingUrl } = payload ?? {};
+
+        if (!orderId || !courierName || !trackingId) {
+          return new Response(
+            JSON.stringify({ error: "Missing shipping details." }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            }
+          );
+        }
+
+        const { data, error } = await supabaseAdmin
+          .from("orders")
+          .update({
+            courier_name: courierName,
+            tracking_id: trackingId,
+            tracking_url: trackingUrl,
+            shipping_status: "Shipped",
+            status: "Shipped", // Auto-update status to Shipped
+          })
+          .eq("id", orderId)
+          .select()
+          .single();
+
+        if (error) {
+          return new Response(
+            JSON.stringify({ error: error.message }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            }
+          );
+        }
+
+        return new Response(JSON.stringify({ success: true, data }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }

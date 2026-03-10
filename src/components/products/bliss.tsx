@@ -9,13 +9,15 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { Toaster, toast } from "react-hot-toast";
 import { useCart } from '../../context/CartContext'
-import bliss from '../../assets/bliss.png';
-import bliss1 from '../../assets/bliss1.png';
-import bliss2 from '../../assets/bliss2.png';
-import bliss3 from '../../assets/bliss3.png';
-import bliss4 from '../../assets/bliss4.png';
-import cocoon from '../../assets/cocoon.png';
-import ortho from '../../assets/ortho.png';
+import { useSEO } from '../../hooks/useSEO';
+import { useSchema } from '../../hooks/useSchema';
+import bliss from '../../assets/bliss.webp';
+import bliss1 from '../../assets/bliss1.webp';
+import bliss2 from '../../assets/bliss2.webp';
+import bliss3 from '../../assets/bliss3.webp';
+import bliss4 from '../../assets/bliss4.webp';
+import cocoon from '../../assets/cocoon.webp';
+import ortho from '../../assets/ortho.webp';
 
 const priceData = {
   "182.9 x 91.4": { "6": 18999, "8": 21999 },
@@ -68,6 +70,23 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isOpen, 
 
 const Bliss: React.FC = () => {
   const { addToCart, setCartOpen } = useCart();
+
+  useSEO({
+    title: 'Bliss Dual Comfort Mattress | Sleeponix — Reversible Soft & Firm',
+    description: 'Buy Bliss 2-in-1 reversible mattress with medium-soft and firm sides. HR+ latex hybrid layer, 8-year warranty. Perfect for couples. Free delivery.',
+    keywords: 'dual comfort mattress, reversible mattress India, soft firm mattress, HR latex hybrid',
+    canonicalPath: '/products/bliss',
+  });
+  useSchema({
+    type: 'Product',
+    name: 'Bliss Dual Comfort Reversible Mattress',
+    description: '2-in-1 reversible mattress with a medium-soft side and a firm side. HR+ latex comfort layer, 8-year warranty, free delivery.',
+    image: '/assets/bliss.webp',
+    price: 18999,
+    rating: 4.8,
+    reviewCount: 56,
+    url: '/products/bliss',
+  });
   const [selectedSize, setSelectedSize] = useState<string>(sizes[0]);
   const [selectedThickness, setSelectedThickness] = useState<string>(thicknesses[0]);
   const [quantity, setQuantity] = useState(1);
@@ -124,7 +143,7 @@ const Bliss: React.FC = () => {
       description: '40 Density HR+ 2” Latex',
       alt: 'Bliss Mattress',
       warranty: "8 Years",
-      category: "Mattress",
+      category: "Mattresses",
     }, quantity);
     toast.success(`✅ ${quantity} x BLISS (${selectedSize} / ${selectedThickness}) added to your cart!`);
     setCartOpen(true);

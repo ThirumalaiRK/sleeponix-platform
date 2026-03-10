@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingCart } from 'lucide-react';
-import { Accessory, accessories } from './products/Accessories';
+import { Accessory, accessories } from './products/accessories';
 import { useCart } from '../context/CartContext'; // Corrected import path
 
 interface AccessoryPopupProps {
@@ -39,7 +39,8 @@ const AccessoryPopup: React.FC<AccessoryPopupProps> = ({ accessoryId, onClose })
           id: `${accessory.id}-${selectedSize.name}`,
           name: `${accessory.name} (${selectedSize.name})`,
           price: selectedSize.price,
-          category: (accessory as any).category ?? 'Accessories',
+          category: (accessory as any).category ?? 'Accessory',
+          alt: accessory.name,
         },
         1
       );
@@ -101,11 +102,10 @@ const AccessoryPopup: React.FC<AccessoryPopupProps> = ({ accessoryId, onClose })
                         <button
                           key={size.name}
                           onClick={() => setSelectedSize(size)}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                            selectedSize.name === size.name
-                              ? 'bg-forest-green text-white shadow-md'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedSize.name === size.name
+                            ? 'bg-forest-green text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
                         >
                           {size.name} ({size.dimensions})
                         </button>

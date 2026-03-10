@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { mattressData } from "./products/mattressData";
 import { pillows } from "./products/pillowData";
-import { accessories } from "./products/Accessories";
+import { accessories } from "./products/accessories";
 
 /* -----------------------------------------------------------
    FINAL COLLECTIONS (MERGED VERSION)
@@ -55,33 +55,43 @@ const ProductCard = ({ product }: { product: any }) => {
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+        {/* Stronger Gradient Overlay for Better Contrast - Always Visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30 opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
       </div>
 
-      {/* Card Content */}
-      <div className="relative h-full flex flex-col justify-end p-6 text-white">
-        <h3 className="text-2xl font-serif font-bold mb-2">{product.name}</h3>
+      {/* Card Content - Improved Layout & Typography */}
+      <div className="relative h-full flex flex-col justify-end p-6 z-10">
 
-        <p className="text-sm text-gray-200 mb-4">
-          {product.description || "Premium quality product"}
-        </p>
+        {/* Title & Tagline Container */}
+        <div className="mb-4">
+          <h3 className="text-2xl font-serif font-bold text-white mb-2 leading-tight drop-shadow-lg tracking-wide">
+            {product.name}
+          </h3>
 
-        {/* Features */}
-        <div className="space-y-2 mb-6 text-sm">
-          {product.features &&
-            product.features.slice(0, 2).map((feature: string, idx: number) => (
-              <div key={idx} className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-gold-400" />
-                <span>{feature}</span>
-              </div>
-            ))}
+          <div className="h-1 w-12 bg-[#c7a76d] rounded-full mb-3"></div>
+
+          <p className="text-sm font-medium text-gray-200 leading-relaxed drop-shadow-md line-clamp-3">
+            {product.description || "Premium quality product designed for your ultimate comfort."}
+          </p>
         </div>
 
-        {/* View Details Button */}
-        <div className="flex items-center justify-center mt-auto">
+        {/* Features - Better Spacing */}
+        {product.features && product.features.length > 0 && (
+          <div className="space-y-2 mb-6">
+            {product.features.slice(0, 2).map((feature: string, idx: number) => (
+              <div key={idx} className="flex items-start gap-2.5">
+                <CheckCircle className="w-4 h-4 text-[#c7a76d] mt-0.5 flex-shrink-0 drop-shadow-sm" />
+                <span className="text-xs font-semibold text-gray-100 drop-shadow-sm">{feature}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* View Details Button - Always visible, higher contrast */}
+        <div className="mt-auto pt-2">
           <Link
             to={product.href || `/products/${product.id}`}
-            className="w-full text-center font-medium text-white border border-white/50 rounded-full px-6 py-3 hover:bg-white/10 transition-colors"
+            className="block w-full text-center font-bold text-white bg-white/20 hover:bg-[#c7a76d] backdrop-blur-sm border border-white/40 hover:border-[#c7a76d] rounded-xl px-4 py-3.5 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             View Details
           </Link>
@@ -137,11 +147,10 @@ const ProductOverview: React.FC = () => {
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`px-4 sm:px-6 py-4 font-semibold text-lg capitalize transition-colors duration-300 relative rounded-t-lg ${
-                  isActive
-                    ? `${tabClass} bg-gray-100`
-                    : "text-charcoal-500 hover:text-charcoal-800 hover:bg-gray-100"
-                }`}
+                className={`px-4 sm:px-6 py-4 font-semibold text-lg capitalize transition-colors duration-300 relative rounded-t-lg ${isActive
+                  ? `${tabClass} bg-gray-100`
+                  : "text-charcoal-500 hover:text-charcoal-800 hover:bg-gray-100"
+                  }`}
               >
                 {tab.title}
 

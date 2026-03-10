@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Navigation, Clock, Star } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
+import { supabase } from '../../supabaseClient';
+import { useSEO } from '../../hooks/useSEO';
 
 interface Store {
   id: string;
@@ -10,6 +12,7 @@ interface Store {
   phone: string;
   lat: number;
   lng: number;
+  google_maps_url?: string;
   rating: number;
   hours: string;
   products: string[];
@@ -22,72 +25,17 @@ const StoreFinder: React.FC = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  useSEO({
+    title: 'Find a Sleeponix Store Near You | Store Locator',
+    description: 'Locate your nearest Sleeponix showroom. Enter your PIN code to find authorised Sleeponix dealers and experience our natural latex mattresses in person.',
+    keywords: 'Sleeponix store near me, latex mattress showroom, mattress store locator India',
+    canonicalPath: '/store-finder',
+  });
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const storeDatabase: Store[] = [
-    {
-      id: '1',
-      name: 'Srinivasa Home Comfort',
-      pincode: '600091',
-      address: 'No. 12, Velachery Main Road, Chennai',
-      phone: '94444 12345',
-      lat: 12.9785,
-      lng: 80.2217,
-      rating: 4.8,
-      hours: '9:00 AM - 8:00 PM',
-      products: ['Mattress', 'Pillows', 'Toppers']
-    },
-    {
-      id: '2',
-      name: 'Dream Sleep Center',
-      pincode: '600001',
-      address: '45, Anna Salai, Mount Road, Chennai',
-      phone: '94444 67890',
-      lat: 13.0827,
-      lng: 80.2707,
-      rating: 4.6,
-      hours: '10:00 AM - 9:00 PM',
-      products: ['Mattress', 'Pillows']
-    },
-    {
-      id: '3',
-      name: 'Natural Sleep Solutions',
-      pincode: '641001',
-      address: '23, Race Course Road, Coimbatore',
-      phone: '94444 11111',
-      lat: 11.0168,
-      lng: 76.9558,
-      rating: 4.9,
-      hours: '9:30 AM - 8:30 PM',
-      products: ['Mattress', 'Toppers']
-    },
-    {
-      id: '4',
-      name: 'Comfort Zone Mattress',
-      pincode: '620001',
-      address: '67, Trichy Road, Thanjavur',
-      phone: '94444 22222',
-      lat: 10.7905,
-      lng: 79.1378,
-      rating: 4.7,
-      hours: '9:00 AM - 7:30 PM',
-      products: ['Mattress', 'Pillows', 'Toppers']
-    },
-    {
-      id: '5',
-      name: 'Elite Sleep Store',
-      pincode: '625001',
-      address: '89, West Veli Street, Madurai',
-      phone: '94444 33333',
-      lat: 9.9252,
-      lng: 78.1198,
-      rating: 4.5,
-      hours: '10:00 AM - 8:00 PM',
-      products: ['Mattress', 'Pillows']
-    }
-  ];
 
   const searchStores = async () => {
     if (!pincode || pincode.length !== 6) {
@@ -97,28 +45,50 @@ const StoreFinder: React.FC = () => {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const exactMatch = storeDatabase.filter(store => store.pincode === pincode);
-      const nearbyStores = storeDatabase.filter(store => {
+    try {
+      const { data, error } = await supabase
+        .from('store_locations')
+        .select('*');
+
+      if (error) {
+        console.error(error);
+        alert('Failed to fetch stores');
+        setLoading(false);
+        return;
+      }
+
+      const storeData = data as Store[];
+
+      const exactMatch = storeData.filter(store => store.pincode === pincode);
+      const nearbyStores = storeData.filter(store => {
         const storePincode = parseInt(store.pincode);
         const searchPincode = parseInt(pincode);
         const difference = Math.abs(storePincode - searchPincode);
-        return difference <= 10000 && store.pincode !== pincode;
+        return difference <= 100 && store.pincode !== pincode;
       });
 
       const results = [...exactMatch, ...nearbyStores].slice(0, 5);
       setStores(results);
-      setLoading(false);
 
       if (results.length === 0) {
         alert('No stores found in your area. Please contact us for assistance.');
       }
-    }, 1000);
+
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getDirections = (store: Store) => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&destination_place_id=${store.name}`;
-    window.open(url, '_blank');
+    if (store.google_maps_url) {
+      window.open(store.google_maps_url, '_blank');
+    } else {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&destination_place_id=${store.name}`;
+      window.open(url, '_blank');
+    }
   };
 
   const callStore = (phone: string) => {
@@ -154,7 +124,7 @@ const StoreFinder: React.FC = () => {
     <div className="min-h-screen bg-soft-cream">
 
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         className="relative w-full min-h-[50vh] flex flex-col justify-center items-center text-center text-white px-6"
         style={{ background: 'linear-gradient(135deg, #1B4D3E 0%, #173F33 100%)' }}
         initial="hidden"
@@ -177,16 +147,16 @@ const StoreFinder: React.FC = () => {
       {/* Store Finder */}
       <section className="py-16 sm:py-20 -mt-24 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+
           {/* Input Box */}
-          <motion.div 
+          <motion.div
             className="bg-white rounded-2xl shadow-lg p-6 sm:p-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:space-x-4 space-y-4 sm:space-y-0">
-              
+
               <div className="relative flex-grow w-full">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
@@ -219,7 +189,7 @@ const StoreFinder: React.FC = () => {
 
           {/* Store Results */}
           {stores.length > 0 && (
-            <motion.div 
+            <motion.div
               className="mt-12 space-y-6"
               initial="hidden"
               animate="visible"
@@ -232,14 +202,13 @@ const StoreFinder: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {stores.map((store) => (
-                  <motion.div 
+                  <motion.div
                     key={store.id}
                     variants={itemVariants}
-                    className={`bg-white rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-lg cursor-pointer ring-2 ${
-                      selectedStore?.id === store.id 
-                        ? 'ring-[#C6A878]' 
-                        : 'ring-transparent'
-                    }`}
+                    className={`bg-white rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-lg cursor-pointer ring-2 ${selectedStore?.id === store.id
+                      ? 'ring-[#C6A878]'
+                      : 'ring-transparent'
+                      }`}
                     onClick={() => setSelectedStore(store)}
                   >
                     <div className="flex justify-between items-start mb-4">

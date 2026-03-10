@@ -8,6 +8,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   const quickLinks = [
@@ -19,16 +20,15 @@ const Footer: React.FC = () => {
 
   const company = [
     { name: "About Us", href: "/about" },
-    { name: "Our Story", href: "/story" },
-    { name: "Store Locator", href: "/store-locator" },
-    { name: "Careers", href: "/careers" },
+    { name: "Our Story", href: "/our-story" },
+    { name: "Store Locator", href: "/store-finder" },
   ];
 
   const legal = [
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms-of-service" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
     { name: "Warranty", href: "/warranty" },
-    { name: "Return Policy", href: "/returns" },
+    { name: "Return Policy", href: "/return-policy" },
   ];
 
   const socialLinks = [
@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
       viewport={{ once: true, amount: 0.1 }}
     >
       {/* Noise Texture */}
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.02]"
         style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E")` }}
       ></div>
@@ -136,19 +136,19 @@ const Footer: React.FC = () => {
 
           {/* Link Columns */}
           {[{ title: "Quick Links", links: quickLinks },
-            { title: "Company", links: company },
-            { title: "Legal", links: legal }].map((column, index) => (
+          { title: "Company", links: company },
+          { title: "Legal", links: legal }].map((column, index) => (
             <motion.div key={index} variants={itemVariants}>
               <h3 className="text-xl font-semibold text-[#E1ECE7] mb-8 tracking-wider">{column.title}</h3>
               <ul className="space-y-5">
                 {column.links.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.href}
                       className="text-[#B0C4BC] hover:text-white transition-colors duration-300 text-base"
                     >
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

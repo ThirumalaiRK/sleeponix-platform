@@ -12,6 +12,7 @@ import {
     Minus,
     Trash2
 } from 'lucide-react';
+
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,9 +21,9 @@ import AccessoryPopup from './AccessoryPopup';
 import { accessories } from './products/accessories';
 import { mattressData } from './products/mattressData';
 
-import curve2 from '../assets/curve2.png';
-import spillow from '../assets/spillow4.png';
-import pillow from '../assets/pillow1.png';
+import curve2 from '../assets/curve2.webp';
+import spillow from '../assets/spillow4.webp';
+import pillow from '../assets/pillow1.webp';
 
 const Navigation: React.FC = () => {
 
@@ -48,6 +49,7 @@ const Navigation: React.FC = () => {
     const isHomePage = location.pathname === '/';
 
     /* Scroll effect */
+
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 50);
         window.addEventListener("scroll", handleScroll);
@@ -142,11 +144,26 @@ const Navigation: React.FC = () => {
                     description: acc.tagline,
                     image: acc.image,
                     href: `/products/accessories/${acc.id}`
-                }))
+                })),
+                'Special Collections': [
+                    {
+                        name: 'Kids Latex',
+                        description: '100% Natural & Safe',
+                        image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=200',
+                        href: '/products/kids-latex'
+                    },
+                    {
+                        name: 'Pet Latex',
+                        description: 'Durable Toys for Pets',
+                        image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=200',
+                        href: '/products/pet-latex'
+                    }
+                ]
             }
         },
-        { name: 'Why Latex?', href: '/why-latex' },
+        { name: 'Find Your Match', href: '/find-match' },
         { name: 'Store Finder', href: '/store-finder', icon: MapPin },
+
         { name: 'Warranty', href: '/warranty', icon: Shield },
         { name: 'Measure Bed Size', href: '/measure-bed-size', icon: Ruler }
     ];
@@ -183,8 +200,8 @@ const Navigation: React.FC = () => {
 
                                         {/* MEGA MENU */}
                                         {isShopMenuOpen && (
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[800px] bg-white border rounded-2xl shadow-2xl p-8 z-50">
-                                                <div className="grid grid-cols-3 gap-8">
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[1000px] bg-white border rounded-2xl shadow-2xl p-8 z-50">
+                                                <div className="grid grid-cols-4 gap-8">
                                                     {Object.entries(item.megaMenu).map(([category, products]) => (
                                                         <div key={category}>
                                                             <h3 className="text-xs uppercase text-gray-500 font-bold mb-4">{category}</h3>
@@ -200,7 +217,7 @@ const Navigation: React.FC = () => {
                                                             {/* PILLOWS */}
                                                             {category === "Pillows" && products.map((p: any) => (
                                                                 <Link key={p.name} to={p.href} onClick={() => handleNavigation(p.href)} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50">
-                                                                    <img src={p.image} className="w-12 h-12 rounded-md bg-gray-100" />
+                                                                    <img src={p.image} alt={p.name} className="w-12 h-12 rounded-md bg-gray-100 object-cover" loading="lazy" />
                                                                     <div>
                                                                         <p className="font-semibold">{p.name}</p>
                                                                         <p className="text-xs text-gray-600">{p.description}</p>
@@ -214,7 +231,7 @@ const Navigation: React.FC = () => {
                                                                 <>
                                                                     {products.map((acc: any) => (
                                                                         <Link key={acc.name} to={acc.href} onClick={() => handleNavigation(acc.href)} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50">
-                                                                            <img src={acc.image} className="w-12 h-12 rounded-md" />
+                                                                            <img src={acc.image} alt={acc.name} className="w-12 h-12 rounded-md object-cover" loading="lazy" />
                                                                             <div>
                                                                                 <p className="font-semibold">{acc.name}</p>
                                                                                 <p className="text-xs text-gray-600">{acc.description}</p>
@@ -227,6 +244,17 @@ const Navigation: React.FC = () => {
                                                                     </Link>
                                                                 </>
                                                             )}
+
+                                                            {/* SPECIAL COLLECTIONS */}
+                                                            {category === "Special Collections" && products.map((p: any) => (
+                                                                <Link key={p.name} to={p.href} onClick={() => handleNavigation(p.href)} className="flex gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                                                    <img src={p.image} alt={p.name} className="w-12 h-12 rounded-md bg-gray-100 object-cover" loading="lazy" />
+                                                                    <div>
+                                                                        <p className="font-semibold">{p.name}</p>
+                                                                        <p className="text-xs text-gray-600">{p.description}</p>
+                                                                    </div>
+                                                                </Link>
+                                                            ))}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -237,7 +265,7 @@ const Navigation: React.FC = () => {
                                     <Link
                                         to={item.href}
                                         onClick={() => handleNavigation(item.href)}
-                                        className={`${getNavTextColor()} whitespace-nowrap`}
+                                        className={`${location.pathname === item.href ? "text-[#C2A66D] font-bold border-b-2 border-[#C2A66D]" : getNavTextColor()} whitespace-nowrap transition-all duration-200`}
                                     >
                                         {item.name}
                                     </Link>
@@ -378,7 +406,7 @@ const Navigation: React.FC = () => {
                                         <div className="flex-grow overflow-y-auto p-6 space-y-6">
                                             {cartItems.map(item => (
                                                 <div key={item.id} className="flex items-start space-x-4">
-                                                    <img src={item.image} className="w-24 h-24 rounded-lg object-cover" />
+                                                    <img src={item.image} alt={item.name} className="w-24 h-24 rounded-lg object-cover" loading="lazy" />
 
                                                     <div className="flex-grow">
                                                         <h4 className="font-semibold">{item.name}</h4>
@@ -455,16 +483,90 @@ const Navigation: React.FC = () => {
                                 </button>
                             </div>
 
-                            <nav className="mt-8 space-y-4">
+                            <nav className="mt-8 mb-8 h-[calc(100vh-120px)] overflow-y-auto pb-12 pr-2 custom-scrollbar">
                                 {menuItems.map(item => (
-                                    <Link
-                                        key={item.name}
-                                        to={item.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="block text-lg text-gray-700"
-                                    >
-                                        {item.name}
-                                    </Link>
+                                    <div key={item.name} className="border-b border-gray-100 last:border-0 py-4">
+                                        {item.megaMenu ? (
+                                            <div className="space-y-4">
+                                                <p className={`text-xl font-serif font-bold ${location.pathname.includes(item.href) ? "text-[#C2A66D]" : "text-[#1C2635]"}`}>
+                                                    {item.name}
+                                                </p>
+
+                                                <div className="pl-4 space-y-6">
+                                                    {Object.entries(item.megaMenu).map(([category, products]) => (
+                                                        <div key={category}>
+                                                            <h4 className="text-sm uppercase text-[#1C2635] font-bold mb-3 tracking-widest border-b border-gray-100 pb-1">{category}</h4>
+                                                            <div className="space-y-3">
+                                                                {category === "Special Collections" ? (
+                                                                    <div className="grid grid-cols-2 gap-4">
+                                                                        {products.map((p: any) => (
+                                                                            <Link
+                                                                                key={p.name}
+                                                                                to={p.href}
+                                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                                                className={`
+                                                                                    group relative overflow-hidden rounded-xl p-4 text-center border transition-all duration-300
+                                                                                    ${p.name.includes("Kids")
+                                                                                        ? "bg-blue-50 border-blue-100 hover:border-blue-300 hover:bg-blue-100"
+                                                                                        : "bg-orange-50 border-orange-100 hover:border-orange-300 hover:bg-orange-100"
+                                                                                    }
+                                                                                `}
+                                                                            >
+                                                                                <div className="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                                                                <span className={`text-2xl mb-2 block transform group-hover:scale-110 transition-transform duration-300`}>
+                                                                                    {p.name.includes("Kids") ? "👶" : "🐾"}
+                                                                                </span>
+
+                                                                                <p className={`
+                                                                                    font-bold text-sm relative z-10 transition-colors duration-300
+                                                                                    ${p.name.includes("Kids") ? "text-blue-800" : "text-orange-800"}
+                                                                                `}>
+                                                                                    {p.name}
+                                                                                </p>
+
+                                                                                {/* Animated underline */}
+                                                                                <div className={`
+                                                                                    mx-auto mt-1 h-0.5 w-0 group-hover:w-1/2 transition-all duration-300 rounded-full
+                                                                                    ${p.name.includes("Kids") ? "bg-blue-400" : "bg-orange-400"}
+                                                                                `}></div>
+                                                                            </Link>
+                                                                        ))}
+                                                                    </div>
+                                                                ) : (
+                                                                    products.map((p: any) => (
+                                                                        <Link
+                                                                            key={p.name || p.id} // handling accessories which might rely on index or id
+                                                                            to={p.href}
+                                                                            onClick={() => setIsMobileMenuOpen(false)}
+                                                                            className={`block text-sm ${location.pathname === p.href ? "text-[#C2A66D] font-bold" : "text-gray-600 hover:text-[#C2A66D]"}`}
+                                                                        >
+                                                                            {p.name}
+                                                                        </Link>
+                                                                    ))
+                                                                )}
+
+                                                                {/* Add "All Products" link for Accessories specific logic from desktop if needed, though usually mapped in products */}
+                                                                {category === "Accessories" && (
+                                                                    <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1B4D3E] font-bold text-xs mt-2 block">
+                                                                        View All Accessories →
+                                                                    </Link>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                to={item.href}
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className={`block text-xl font-serif font-bold ${location.pathname === item.href ? "text-[#C2A66D]" : "text-[#1C2635]"}`}
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        )}
+                                    </div>
                                 ))}
                             </nav>
                         </motion.div>

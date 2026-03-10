@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Confetti from 'react-confetti';
-import { ShieldCheck, User, Package, Upload, Calendar, ArrowRight, ArrowLeft, X, Info, Mail, Phone, ChevronDown, CheckCircle } from 'lucide-react';
+import { ShieldCheck, User, Package, Upload, Calendar, ArrowRight, ArrowLeft, Info, Mail, Phone, ChevronDown, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSEO } from '../../hooks/useSEO';
 
 
 // --- Helper Components ---
@@ -63,6 +64,13 @@ type FormSection = 'customer' | 'product' | 'upload';
 
 const WarrantyRegistration: React.FC = () => {
   const [activeSection, setActiveSection] = useState<FormSection>('customer');
+
+  useSEO({
+    title: 'Warranty Registration | Sleeponix — Activate Your Product Warranty',
+    description: 'Register your Sleeponix mattress or pillow warranty online in minutes. Upload your invoice to activate your warranty and enjoy hassle-free protection.',
+    keywords: 'Sleeponix warranty registration, mattress warranty India, activate product warranty',
+    canonicalPath: '/warranty',
+  });
   const [formData, setFormData] = useState<WarrantyFormData>({
     fullName: '',
     email: '',
@@ -81,7 +89,7 @@ const WarrantyRegistration: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [_uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [shake, setShake] = useState(false);
 
@@ -118,7 +126,7 @@ const WarrantyRegistration: React.FC = () => {
         setErrors(prev => ({ ...prev, invoice: 'File is too large. Maximum size is 5MB.' }));
         return;
       }
-      
+
       setFormData(prev => ({ ...prev, invoice: file }));
       setErrors(prev => ({ ...prev, invoice: undefined }));
 
@@ -137,7 +145,7 @@ const WarrantyRegistration: React.FC = () => {
   };
 
 
-  const handleDrag = function(e: React.DragEvent) {
+  const handleDrag = function (e: React.DragEvent) {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -153,7 +161,7 @@ const WarrantyRegistration: React.FC = () => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFileChange(e.dataTransfer.files);
+      handleFileChange(e.dataTransfer.files);
     }
   };
 
@@ -189,7 +197,7 @@ const WarrantyRegistration: React.FC = () => {
       }
     }
 
-    setErrors(prev => ({...prev, ...newErrors}));
+    setErrors(prev => ({ ...prev, ...newErrors }));
     if (!isValid) {
       setShake(true);
       setTimeout(() => setShake(false), 500);
@@ -234,7 +242,7 @@ const WarrantyRegistration: React.FC = () => {
     }, 200);
 
     await new Promise(resolve => setTimeout(resolve, 2500));
-    
+
     clearInterval(progressInterval);
     setIsSubmitting(false);
     setIsSubmitted(true);
@@ -330,7 +338,7 @@ const WarrantyRegistration: React.FC = () => {
             transition={{ type: 'spring', stiffness: 120, damping: 12, delay: 0.2 }}
             className="p-6 bg-white/10 rounded-full backdrop-blur-md"
           >
-            <ShieldCheck size={64} className="text-white drop-shadow-lg" strokeWidth={1.5}/>
+            <ShieldCheck size={64} className="text-white drop-shadow-lg" strokeWidth={1.5} />
           </motion.div>
         </div>
         <h1 className="font-serif text-5xl md:text-6xl font-bold mt-8 z-10">Warranty Registration</h1>
@@ -339,8 +347,8 @@ const WarrantyRegistration: React.FC = () => {
 
       {/* --- Form Container --- */}
       <main className="relative -mt-24 pb-24">
-        <motion.div 
-            className={`max-w-3xl mx-auto px-4 ${shake ? 'animate-shake' : ''}`}
+        <motion.div
+          className={`max-w-3xl mx-auto px-4 ${shake ? 'animate-shake' : ''}`}
         >
           <div className="bg-form-base rounded-3xl shadow-form-card p-8 md:p-12 border border-form-border">
             {isSubmitted ? renderSuccessScreen() : (
@@ -371,7 +379,7 @@ const WarrantyRegistration: React.FC = () => {
                         </div>
                         {renderInputField('phone', 'Phone Number', '+91 98765 43210', 'tel', <Phone size={18} />)}
                         <div className="flex justify-end pt-4">
-                          <motion.button type="button" onClick={() => handleNextSection('product')} whileHover={{scale: 1.05}} whileTap={{scale: 0.98}} className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold-champagne to-amber-400 text-white font-semibold shadow-md transition-transform">
+                          <motion.button type="button" onClick={() => handleNextSection('product')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold-champagne to-amber-400 text-white font-semibold shadow-md transition-transform">
                             Next <ArrowRight size={18} className="inline ml-2" />
                           </motion.button>
                         </div>
@@ -420,10 +428,10 @@ const WarrantyRegistration: React.FC = () => {
                         </div>
                         {renderInputField('purchaseDate', 'Date of Purchase', '', 'date', <Calendar size={18} />, true)}
                         <div className="flex justify-between items-center pt-4">
-                          <motion.button type="button" onClick={() => setActiveSection('customer')} whileHover={{scale: 1.05}} whileTap={{scale: 0.98}} className="px-8 py-3 rounded-lg bg-gray-200 text-slate-gray font-semibold transition-transform">
+                          <motion.button type="button" onClick={() => setActiveSection('customer')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-8 py-3 rounded-lg bg-gray-200 text-slate-gray font-semibold transition-transform">
                             <ArrowLeft size={18} className="inline mr-2" /> Back
                           </motion.button>
-                          <motion.button type="button" onClick={() => handleNextSection('upload')} whileHover={{scale: 1.05}} whileTap={{scale: 0.98}} className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold-champagne to-amber-400 text-white font-semibold shadow-md transition-transform">
+                          <motion.button type="button" onClick={() => handleNextSection('upload')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold-champagne to-amber-400 text-white font-semibold shadow-md transition-transform">
                             Next <ArrowRight size={18} className="inline ml-2" />
                           </motion.button>
                         </div>
@@ -448,7 +456,7 @@ const WarrantyRegistration: React.FC = () => {
                                 <CheckCircle size={40} className="text-green-500 mx-auto mb-2" />
                                 <p className="font-semibold text-slate-gray">{formData.invoice.name}</p>
                                 <p className="text-sm text-gray-500">{(formData.invoice.size / 1024).toFixed(2)} KB</p>
-                                <button type="button" onClick={(e) => { e.stopPropagation(); setFormData(p => ({...p, invoice: null})); setUploadProgress(0); }} className="mt-2 text-soft-error hover:underline text-sm">Remove</button>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); setFormData(p => ({ ...p, invoice: null })); setUploadProgress(0); }} className="mt-2 text-soft-error hover:underline text-sm">Remove</button>
                               </div>
                             ) : (
                               <div className="text-center text-gray-500">
@@ -461,7 +469,7 @@ const WarrantyRegistration: React.FC = () => {
                           {errors.invoice && <p className="text-sm text-soft-error mt-1">{errors.invoice}</p>}
                         </div>
                         <div className="flex justify-between items-center pt-4">
-                          <motion.button type="button" onClick={() => setActiveSection('product')} whileHover={{scale: 1.05}} whileTap={{scale: 0.98}} className="px-8 py-3 rounded-lg bg-gray-200 text-slate-gray font-semibold transition-transform">
+                          <motion.button type="button" onClick={() => setActiveSection('product')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="px-8 py-3 rounded-lg bg-gray-200 text-slate-gray font-semibold transition-transform">
                             <ArrowLeft size={18} className="inline mr-2" /> Back
                           </motion.button>
                           <motion.button

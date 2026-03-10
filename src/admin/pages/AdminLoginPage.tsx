@@ -25,16 +25,16 @@ const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg">
-        <div className="text-center">
-          <img src={logo} alt="Sleeponix Logo" className="h-12 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
-          <p className="text-gray-500">Welcome back, please login to your account.</p>
+    <div className="flex items-center justify-center min-h-screen bg-[#f6efe6] font-sans">
+      <div className="w-full max-w-md p-8 space-y-8 bg-[#fffaf1] border border-[#eadfcc] rounded-[20px] shadow-premium">
+        <div className="text-center mt-2">
+          <img src={logo} alt="Sleeponix Logo" className="h-14 mx-auto mb-6" />
+          <h1 className="text-3xl font-serif font-bold text-[#143d29]">Admin Login</h1>
+          <p className="text-[#5f4b3b] mt-2">Welcome back, please secure your session.</p>
         </div>
-        <form className="space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-6 pb-2" onSubmit={handleLogin}>
           <div>
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="text-sm font-bold text-[#143d29] tracking-wide uppercase">
               Email address
             </label>
             <input
@@ -45,11 +45,12 @@ const AdminLoginPage: React.FC = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+              className="w-full px-4 py-3 mt-2 font-medium bg-white border border-[#eadfcc] rounded-xl shadow-sm focus:ring-2 focus:ring-[#143d29] focus:border-[#143d29] outline-none transition-all placeholder-gray-400"
+              placeholder="admin@sleeponix.com"
             />
           </div>
           <div>
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="text-sm font-bold text-[#143d29] tracking-wide uppercase">
               Password
             </label>
             <input
@@ -60,15 +61,16 @@ const AdminLoginPage: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+              className="w-full px-4 py-3 mt-2 font-medium bg-white border border-[#eadfcc] rounded-xl shadow-sm focus:ring-2 focus:ring-[#143d29] focus:border-[#143d29] outline-none transition-all placeholder-gray-400"
+              placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 font-medium text-green-700 bg-white border border-green-700 rounded-lg shadow-sm hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-colors duration-300"
+            className="w-full px-4 py-3.5 mt-4 text-base font-bold text-white bg-[#143d29] rounded-xl shadow-premium hover:bg-[#0f2e1f] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#143d29] focus:ring-offset-[#f6efe6] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Authenticating...' : 'Secure Sign In'}
           </button>
         </form>
       </div>
